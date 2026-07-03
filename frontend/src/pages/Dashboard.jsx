@@ -185,13 +185,13 @@ export default function Dashboard() {
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-gradient">Your Curation Engine</h1>
           <p className="text-muted-foreground text-lg max-w-2xl">Auto-categorize, extract metadata, and manage your fashion inspiration seamlessly across the web.</p>
         </motion.div>
-          <Tabs defaultValue="Products" className="w-full">
-            <TabsList className="grid w-full grid-cols-5 mb-8 h-12 glass p-1 rounded-xl">
-              <TabsTrigger value="Products" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Products ({items['Products'].length})</TabsTrigger>
-              <TabsTrigger value="Websites" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Websites ({items['Websites'].length})</TabsTrigger>
-              <TabsTrigger value="Reels" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Reels ({items['Reels'].length})</TabsTrigger>
-              <TabsTrigger value="Manual" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Requires Manual Upload ({items['Requires Manual Upload'].length})</TabsTrigger>
-              <TabsTrigger value="Trash" className="rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Trash ({items['Trash'].length})</TabsTrigger>
+          <Tabs defaultValue="Products" className="w-full max-w-full">
+            <TabsList className="flex h-auto w-full overflow-x-auto justify-start mb-8 glass p-1 rounded-xl hide-scrollbar">
+              <TabsTrigger value="Products" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Products ({items['Products'].length})</TabsTrigger>
+              <TabsTrigger value="Websites" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Websites ({items['Websites'].length})</TabsTrigger>
+              <TabsTrigger value="Reels" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Reels ({items['Reels'].length})</TabsTrigger>
+              <TabsTrigger value="Manual" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Requires Manual Upload ({items['Requires Manual Upload'].length})</TabsTrigger>
+              <TabsTrigger value="Trash" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Trash ({items['Trash'].length})</TabsTrigger>
             </TabsList>
             
             <div className="mt-6 min-h-[500px]">

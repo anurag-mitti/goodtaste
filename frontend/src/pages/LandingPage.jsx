@@ -190,7 +190,7 @@ export default function LandingPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.8 }}
-        className="absolute bottom-8 right-8 text-xs font-medium text-white/40 tracking-wider"
+        className="absolute bottom-4 left-0 right-0 text-center md:bottom-8 md:text-right md:left-auto md:right-8 text-[10px] md:text-xs font-medium text-white/40 tracking-wider pointer-events-none"
       >
         MADE BY ANURAG MITTI FOR ANURAG MITTI
       </motion.div>
@@ -200,7 +200,7 @@ export default function LandingPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.5 }}
-        className="absolute bottom-8 left-8 flex items-center gap-3 opacity-60"
+        className="absolute bottom-12 left-0 right-0 flex justify-center md:bottom-8 md:left-8 md:right-auto md:justify-start items-center gap-3 opacity-60 pointer-events-none"
       >
         <motion.div 
           animate={{ y: [0, 5, 0] }}
