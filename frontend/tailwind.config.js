@@ -4,9 +4,14 @@ export default {
     content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    // Force rebuild 2
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ['Inter', 'sans-serif'],
+  			heading: ['Outfit', 'sans-serif'],
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

@@ -100,11 +100,13 @@ fastify.post('/api/urls/clear-trash', async (request, reply) => {
 
 const start = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/Clothes');
-    fastify.log.info('Connected to MongoDB (Clothes Database)');
+    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/Clothes';
+    await mongoose.connect(MONGODB_URI);
+    fastify.log.info('Connected to MongoDB');
     
-    await fastify.listen({ port: 3001 });
-    console.log(`Server listening at http://localhost:3001`);
+    const PORT = process.env.PORT || 3001;
+    await fastify.listen({ port: PORT, host: '0.0.0.0' });
+    console.log(`Server listening on port ${PORT}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
