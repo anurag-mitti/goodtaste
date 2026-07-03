@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export default function AddLinksModal({ onClose }) {
   const [links, setLinks] = useState('');
@@ -13,7 +14,7 @@ export default function AddLinksModal({ onClose }) {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/ingest', {
+      const response = await fetch(`${API_URL}/api/ingest`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ urls })
