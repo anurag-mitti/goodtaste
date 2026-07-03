@@ -16,7 +16,10 @@ export default function AddLinksModal({ onClose }) {
     try {
       const response = await fetch(`${API_URL}/api/ingest`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-admin-password': localStorage.getItem('adminToken') || ''
+        },
         body: JSON.stringify({ urls })
       });
       if (!response.ok) throw new Error('Network response was not ok');
