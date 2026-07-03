@@ -4,7 +4,25 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { toast } from 'sonner';
 import { Globe, ShoppingCart, Video, ImageOff, Trash2, Edit2, CheckCircle2 } from 'lucide-react';
+
+function ProgressiveGrid({ items, renderItem }) {
+  const [count, setCount] = useState(12);
+  
+  useEffect(() => {
+    if (count < items.length) {
+      const timer = setTimeout(() => setCount(c => c + 12), 150);
+      return () => clearTimeout(timer);
+    }
+  }, [count, items.length]);
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {items.slice(0, count).map(renderItem)}
+    </div>
+  );
+}
 
 function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
   const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
@@ -153,27 +171,30 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
 export function ProductsGrid({ items, onUpdate, onDelete }) {
   if (items.length === 0) return <p className="text-muted-foreground py-8 text-center">No products found yet.</p>;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {items.map((item, i) => <BaseCard key={item._id || i} item={item} icon={ShoppingCart} onUpdate={onUpdate} onDelete={onDelete} categoryName="Products" />)}
-    </div>
+    <ProgressiveGrid 
+      items={items} 
+      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={ShoppingCart} onUpdate={onUpdate} onDelete={onDelete} categoryName="Products" />} 
+    />
   );
 }
 
 export function WebsitesGrid({ items, onUpdate, onDelete }) {
   if (items.length === 0) return <p className="text-muted-foreground py-8 text-center">No websites found yet.</p>;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {items.map((item, i) => <BaseCard key={item._id || i} item={item} icon={Globe} onUpdate={onUpdate} onDelete={onDelete} categoryName="Websites" />)}
-    </div>
+    <ProgressiveGrid 
+      items={items} 
+      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Globe} onUpdate={onUpdate} onDelete={onDelete} categoryName="Websites" />} 
+    />
   );
 }
 
 export function ReelsGrid({ items, onUpdate, onDelete }) {
   if (items.length === 0) return <p className="text-muted-foreground py-8 text-center">No reels found yet.</p>;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {items.map((item, i) => <BaseCard key={item._id || i} item={item} icon={Video} onUpdate={onUpdate} onDelete={onDelete} categoryName="Reels" />)}
-    </div>
+    <ProgressiveGrid 
+      items={items} 
+      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Video} onUpdate={onUpdate} onDelete={onDelete} categoryName="Reels" />} 
+    />
   );
 }
 
@@ -290,24 +311,26 @@ function ManualCard({ item, onUpdate, onDelete }) {
 export function ManualUploadGrid({ items, onUpdate, onDelete }) {
   if (items.length === 0) return <p className="text-muted-foreground py-8 text-center">No items require manual upload.</p>;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {items.map((item, i) => <ManualCard key={item._id || i} item={item} onUpdate={onUpdate} onDelete={onDelete} />)}
-    </div>
+    <ProgressiveGrid 
+      items={items} 
+      renderItem={(item, i) => <ManualCard key={item._id || i} item={item} onUpdate={onUpdate} onDelete={onDelete} />} 
+    />
   );
 }
 
 export function TrashGrid({ items, onClearTrash }) {
   if (items.length === 0) return <p className="text-muted-foreground py-8 text-center">Trash is empty.</p>;
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button variant="destructive" size="sm" onClick={onClearTrash} className="gap-2">
+    <div>
+      <div className="flex justify-end mb-4">
+        <Button variant="destructive" size="sm" onClick={onClearTrash} className="flex items-center gap-2 rounded-xl shadow-lg hover:shadow-red-500/20 transition-all">
           <Trash2 className="w-4 h-4" /> Empty Trash
         </Button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {items.map((item, i) => <BaseCard key={item._id || i} item={item} icon={Trash2} categoryName="Trash" />)}
-      </div>
+      <ProgressiveGrid 
+        items={items} 
+        renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Trash2} categoryName="Trash" />} 
+      />
     </div>
   );
 }
