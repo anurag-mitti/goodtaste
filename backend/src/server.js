@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import compress from '@fastify/compress';
 import { Server } from 'socket.io';
 import PQueue from 'p-queue';
 import mongoose from 'mongoose';
@@ -10,6 +11,8 @@ const fastify = Fastify({
   logger: true,
   bodyLimit: 52428800 // 50MB limit to allow large base64 image uploads
 });
+
+await fastify.register(compress, { global: true });
 
 await fastify.register(cors, {
   origin: '*', // Allow all origins for this demo
