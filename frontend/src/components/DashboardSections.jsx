@@ -54,6 +54,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
             <img 
               src={item.image} 
               alt={item.title || 'Preview'} 
+              loading="lazy"
               className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-110 opacity-90 group-hover/card:opacity-100"
               onError={(e) => {
                 e.target.onerror = null;
@@ -223,7 +224,7 @@ function ManualCard({ item, onUpdate, onDelete }) {
         )}
         {previewUrl ? (
           <div className="aspect-[4/5] w-full overflow-hidden bg-black/50 flex items-center justify-center relative group/img">
-            <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" />
+            <img src={previewUrl} alt="Preview" loading="lazy" className="object-cover w-full h-full" />
             <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer text-white text-xs z-10">
               Change Image
               <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
