@@ -3,13 +3,13 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Hexagon, Network, Eye, ArrowRight, Zap } from 'lucide-react';
 
-function FloatingNode({ icon: Icon, title, value, x, y, delay }) {
+function FloatingNode({ icon: Icon, title, value, x, y, delay, className = '' }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 1, delay }}
-      className={`absolute flex items-center gap-3 glass px-4 py-2 rounded-full`}
+      className={`absolute flex items-center gap-3 glass px-4 py-2 rounded-full ${className}`}
       style={{ left: x, top: y }}
     >
       <motion.div
@@ -78,13 +78,13 @@ export default function LandingPage() {
       />
 
       {/* Floating Constellation Nodes */}
-      <FloatingNode icon={Hexagon} title="Categorization" value="Automated Engine" x="15%" y="25%" delay={0.2} />
-      <FloatingNode icon={Network} title="Metadata" value="Real-time Extraction" x="70%" y="30%" delay={0.4} />
-      <FloatingNode icon={Sparkles} title="Aesthetics" value="Visual Curation" x="20%" y="75%" delay={0.6} />
-      <FloatingNode icon={Eye} title="Discovery" value="Cross-Platform" x="75%" y="65%" delay={0.8} />
+      <FloatingNode icon={Hexagon} title="Categorization" value="Automated Engine" x="15%" y="25%" delay={0.2} className="hidden md:flex" />
+      <FloatingNode icon={Network} title="Metadata" value="Real-time Extraction" x="70%" y="30%" delay={0.4} className="hidden md:flex" />
+      <FloatingNode icon={Sparkles} title="Aesthetics" value="Visual Curation" x="20%" y="75%" delay={0.6} className="hidden md:flex" />
+      <FloatingNode icon={Eye} title="Discovery" value="Cross-Platform" x="75%" y="65%" delay={0.8} className="hidden md:flex" />
 
       {/* SVG Connecting Lines (Decorative) */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20 z-0">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20 z-0 hidden md:block">
         <motion.path 
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
