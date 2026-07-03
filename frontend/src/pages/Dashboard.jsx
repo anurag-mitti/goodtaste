@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import useSWR from 'swr';
 import AddLinksModal from '../components/AddLinksModal';
 import { ProductsGrid, WebsitesGrid, ReelsGrid, ManualUploadGrid, TrashGrid } from '../components/DashboardSections';
 import Header from '../components/Layout/Header';
@@ -24,28 +25,35 @@ export default function Dashboard() {
     'Trash': []
   });
 
+  const { data: swrData } = useSWR(`${API_URL}/api/urls`, url => fetch(url).then(r => r.json()), { 
+    revalidateOnFocus: false
+  });
+
   useEffect(() => {
-    fetch(`${API_URL}/api/urls`)
-      .then(res => res.json())
-      .then(data => {
-        const grouped = {
-          'Products': [],
-          'Websites': [],
-          'Reels': [],
-          'Requires Manual Upload': [],
-          'Trash': []
-        };
-        data.forEach(item => {
-          if (grouped[item.category]) {
-            grouped[item.category].push(item);
-          } else {
-            grouped['Requires Manual Upload'].push(item);
-          }
-        });
-        setItems(grouped);
-      })
-      .catch(err => console.error('Error fetching data:', err));
-  }, []);
+    if (swrData) {
+      const grouped = {
+        'Products': [],
+        'Websites': [],
+        'Reels': [],
+        'Requires Manual Upload': [],
+        'Trash': []
+      };
+      swrData.forEach(item => {
+        if (grouped[item.category]) {
+          grouped[item.category].push(item);
+        } else {
+          grouped['Requires Manual Upload'].push(item);
+        }
+      });
+      setItems(grouped);
+    }
+  }, [swrData]);
+
+  const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
+  const getAuthHeader = () => ({
+    'Content-Type': 'application/json',
+    'x-admin-password': localStorage.getItem('adminToken') || ''
+  });
 
   useEffect(() => {
     socket.on('url_processed', (data) => {
@@ -73,7 +81,7 @@ export default function Dashboard() {
     try {
       const res = await fetch(`${API_URL}/api/urls/update`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeader(),
         body: JSON.stringify({ id, ...updates })
       });
       
@@ -116,7 +124,7 @@ export default function Dashboard() {
     try {
       const res = await fetch(`${API_URL}/api/urls/delete`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeader(),
         body: JSON.stringify({ id })
       });
 
@@ -149,7 +157,8 @@ export default function Dashboard() {
   const handleClearTrash = async () => {
     try {
       const res = await fetch(`${API_URL}/api/urls/clear-trash`, {
-        method: 'POST'
+        method: 'POST',
+        headers: getAuthHeader()
       });
       if (!res.ok) throw new Error('Failed to clear trash');
       
@@ -186,13 +195,25 @@ export default function Dashboard() {
           <p className="text-muted-foreground text-lg max-w-2xl">Auto-categorize, extract metadata, and manage your fashion inspiration seamlessly across the web.</p>
         </motion.div>
           <Tabs defaultValue="Products" className="w-full max-w-full">
-            <TabsList className="flex h-auto w-full overflow-x-auto justify-start mb-8 glass p-1 rounded-xl hide-scrollbar">
-              <TabsTrigger value="Products" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Products ({items['Products'].length})</TabsTrigger>
-              <TabsTrigger value="Websites" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Websites ({items['Websites'].length})</TabsTrigger>
-              <TabsTrigger value="Reels" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Reels ({items['Reels'].length})</TabsTrigger>
-              <TabsTrigger value="Manual" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Requires Manual Upload ({items['Requires Manual Upload'].length})</TabsTrigger>
-              <TabsTrigger value="Trash" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Trash ({items['Trash'].length})</TabsTrigger>
-            </TabsList>
+            <div className="relative">
+              <TabsList className="flex h-auto w-full overflow-x-auto justify-start mb-8 glass p-1 rounded-xl hide-scrollbar">
+                <TabsTrigger value="Products" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Products ({items['Products'].length})</TabsTrigger>
+                <TabsTrigger value="Websites" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Websites ({items['Websites'].length})</TabsTrigger>
+                <TabsTrigger value="Reels" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Reels ({items['Reels'].length})</TabsTrigger>
+                <TabsTrigger value="Manual" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Requires Manual Upload ({items['Requires Manual Upload'].length})</TabsTrigger>
+                <TabsTrigger value="Trash" className="flex-shrink-0 rounded-lg data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all">Trash ({items['Trash'].length})</TabsTrigger>
+              </TabsList>
+              
+              {isAdmin && (
+                <Button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="absolute top-0 right-0 h-10 w-10 md:w-auto md:px-4 rounded-xl bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-5 h-5" />
+                  <span className="hidden md:inline font-semibold">Add Links</span>
+                </Button>
+              )}
+            </div>
             
             <div className="mt-6 min-h-[500px]">
               <AnimatePresence mode="wait">

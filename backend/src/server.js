@@ -33,7 +33,15 @@ io.on('connection', (socket) => {
 // In-memory queue with concurrency limit of 5
 const queue = new PQueue({ concurrency: 5 });
 
-fastify.post('/api/ingest', async (request, reply) => {
+const verifyAdmin = async (request, reply) => {
+  const adminPassword = process.env.ADMIN_PASSWORD || 'mitti_dude';
+  if (request.headers['x-admin-password'] !== adminPassword) {
+    reply.code(401).send({ error: 'Unauthorized: Admin password required' });
+    return reply; // Fastify requires returning reply to stop execution in some versions, but usually sending stops it if preHandler.
+  }
+};
+
+fastify.post('/api/ingest', { preHandler: [verifyAdmin] }, async (request, reply) => {
   const { urls } = request.body;
 
   if (!Array.isArray(urls) || urls.length === 0) {
@@ -70,7 +78,7 @@ fastify.get('/api/urls', async (request, reply) => {
   return items;
 });
 
-fastify.put('/api/urls/update', async (request, reply) => {
+fastify.put('/api/urls/update', { preHandler: [verifyAdmin] }, async (request, reply) => {
   const { id, title, image, category, bought } = request.body;
   const updateFields = {};
   if (title !== undefined) updateFields.title = title;
@@ -86,7 +94,7 @@ fastify.put('/api/urls/update', async (request, reply) => {
   return updatedItem;
 });
 
-fastify.post('/api/urls/delete', async (request, reply) => {
+fastify.post('/api/urls/delete', { preHandler: [verifyAdmin] }, async (request, reply) => {
   const { id } = request.body;
   const updatedItem = await UrlItem.findByIdAndUpdate(
     id,
@@ -96,7 +104,7 @@ fastify.post('/api/urls/delete', async (request, reply) => {
   return updatedItem;
 });
 
-fastify.post('/api/urls/clear-trash', async (request, reply) => {
+fastify.post('/api/urls/clear-trash', { preHandler: [verifyAdmin] }, async (request, reply) => {
   await UrlItem.deleteMany({ category: 'Trash' });
   return { success: true };
 });

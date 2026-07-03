@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Hexagon, Network, Eye, ArrowRight, Zap } from 'lucide-react';
+import useSWR from 'swr';
 
 function FloatingNode({ icon: Icon, title, value, x, y, delay, className = '' }) {
   return (
@@ -50,6 +51,12 @@ function FallingRays() {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  
+  // Prefetch data in background so it's ready when entering the app
+  useSWR(`${API_URL}/api/urls`, (url) => fetch(url).then(r => r.json()), { 
+    revalidateOnFocus: false // Don't block rendering
+  });
 
   return (
     <motion.div 

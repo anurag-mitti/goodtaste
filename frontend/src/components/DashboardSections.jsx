@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Globe, ShoppingCart, Video, ImageOff, Trash2, Edit2, CheckCircle2 } from 'lucide-react';
 
 function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
+  const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(item.title || '');
 
@@ -39,7 +40,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
       className="group/card h-full"
     >
       <Card className="flex flex-col h-full overflow-hidden glass-card border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl group-hover/card:shadow-primary/10 relative">
-        {onDelete && (
+        {onDelete && isAdmin && (
           <button 
             onClick={() => onDelete(item._id, categoryName || item.category)}
             className="absolute top-2 right-2 z-20 bg-black/60 hover:bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover/card:opacity-100 transition-opacity shadow-sm"
@@ -63,7 +64,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
                 e.target.nextSibling.className = 'absolute inset-0 flex items-center justify-center text-muted-foreground bg-muted';
               }}
             />
-            {onUpdate && (
+            {onUpdate && isAdmin && (
               <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer text-white text-xs z-10">
                 Change Image
                 <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
@@ -77,7 +78,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
           <div className="aspect-[4/5] w-full bg-muted/20 flex flex-col items-center justify-center text-muted-foreground relative">
             <ImageOff className="w-8 h-8 mb-2 opacity-50" />
             <span className="text-sm">No image</span>
-            {onUpdate && (
+            {onUpdate && isAdmin && (
               <label className="mt-4 cursor-pointer glass text-white px-3 py-1.5 rounded-md text-xs hover:bg-white/10 transition-colors">
                 Upload Image
                 <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
@@ -101,7 +102,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
           ) : (
             <div className="flex items-start justify-between gap-2 mb-2 group/title">
               <h3 className="font-semibold text-sm line-clamp-2" title={item.title}>{item.title}</h3>
-              {onUpdate && (
+              {onUpdate && isAdmin && (
                 <button onClick={() => setIsEditing(true)} className="opacity-0 group-hover/title:opacity-100 text-muted-foreground hover:text-primary transition-opacity shrink-0">
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
@@ -117,7 +118,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
             <a href={item.url} target="_blank" rel="noreferrer" className="text-[10px] text-primary hover:underline font-medium">Visit site</a>
           </div>
 
-          {onUpdate && categoryName !== 'Trash' && (
+          {onUpdate && isAdmin && categoryName !== 'Trash' && (
             <div className="absolute top-2 left-2 z-30 opacity-0 group-hover/card:opacity-100 transition-opacity">
                <div className="group/dropdown relative">
                  <button className="glass hover:bg-white/10 text-white px-3 py-1.5 rounded-lg shadow-lg text-xs font-medium flex items-center gap-1 transition-all">
@@ -132,7 +133,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
             </div>
           )}
 
-          {onUpdate && categoryName === 'Products' && (
+          {onUpdate && isAdmin && categoryName === 'Products' && (
             <Button 
               variant={item.bought ? "default" : "outline"} 
               size="sm" 
@@ -177,6 +178,7 @@ export function ReelsGrid({ items, onUpdate, onDelete }) {
 }
 
 function ManualCard({ item, onUpdate, onDelete }) {
+  const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(item.title || '');
@@ -213,7 +215,7 @@ function ManualCard({ item, onUpdate, onDelete }) {
       className="group/card h-full"
     >
       <Card className="flex flex-col h-full overflow-hidden glass-card border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl group-hover/card:shadow-primary/10 relative">
-        {onDelete && (
+        {onDelete && isAdmin && (
           <button 
             onClick={() => onDelete(item._id, 'Requires Manual Upload')}
             className="absolute top-2 right-2 z-20 bg-black/60 hover:bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover/card:opacity-100 transition-opacity shadow-sm"
@@ -225,19 +227,23 @@ function ManualCard({ item, onUpdate, onDelete }) {
         {previewUrl ? (
           <div className="aspect-[4/5] w-full overflow-hidden bg-black/50 flex items-center justify-center relative group/img">
             <img src={previewUrl} alt="Preview" loading="lazy" className="object-cover w-full h-full" />
-            <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer text-white text-xs z-10">
-              Change Image
-              <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-            </label>
+            {isAdmin && (
+              <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer text-white text-xs z-10">
+                Change Image
+                <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+              </label>
+            )}
           </div>
         ) : (
           <div className="aspect-[4/5] w-full bg-muted/20 flex flex-col items-center justify-center text-muted-foreground p-4 text-center">
             <ImageOff className="w-8 h-8 mb-2 opacity-50" />
             <span className="text-sm">No image</span>
-            <label className="mt-4 cursor-pointer glass text-white px-3 py-1.5 rounded-md text-xs hover:bg-white/10 transition-colors">
-              Upload Image
-              <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-            </label>
+            {isAdmin && (
+              <label className="mt-4 cursor-pointer glass text-white px-3 py-1.5 rounded-md text-xs hover:bg-white/10 transition-colors">
+                Upload Image
+                <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+              </label>
+            )}
           </div>
         )}
         <CardContent className="p-4 flex-1 flex flex-col relative z-10 bg-background/50 backdrop-blur-sm border-t border-white/5">
@@ -253,11 +259,13 @@ function ManualCard({ item, onUpdate, onDelete }) {
               <Button size="sm" onClick={handleSaveTitle} className="h-7 text-xs px-2">Save</Button>
             </div>
           ) : (
-            <div className="flex items-start justify-between gap-2 mb-2 group/title">
-              <h3 className="font-semibold text-sm line-clamp-2" title={item.title}>{item.title}</h3>
-              <button onClick={() => setIsEditing(true)} className="opacity-0 group-hover/title:opacity-100 text-muted-foreground hover:text-primary transition-opacity shrink-0">
-                <Edit2 className="w-3.5 h-3.5" />
-              </button>
+            <div className="flex items-start justify-between gap-2 mb-4 group/title">
+              <h3 className="font-semibold text-sm line-clamp-2" title={item.title}>{item.title || 'Untitled Web Item'}</h3>
+              {isAdmin && (
+                <button onClick={() => setIsEditing(true)} className="opacity-0 group-hover/title:opacity-100 text-muted-foreground hover:text-primary transition-opacity shrink-0">
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           )}
 
@@ -265,11 +273,13 @@ function ManualCard({ item, onUpdate, onDelete }) {
           
           <div className="mt-auto pt-4 border-t border-white/10 space-y-3">
             <p className="text-[10px] font-medium text-muted-foreground">Classify & Move To:</p>
-            <div className="flex gap-2 flex-wrap">
-              <Button size="sm" variant="outline" className="text-xs h-7 bg-transparent border-white/10 hover:bg-white/5" onClick={() => handleMove('Products')}>Products</Button>
-              <Button size="sm" variant="outline" className="text-xs h-7 bg-transparent border-white/10 hover:bg-white/5" onClick={() => handleMove('Websites')}>Websites</Button>
-              <Button size="sm" variant="outline" className="text-xs h-7 bg-transparent border-white/10 hover:bg-white/5" onClick={() => handleMove('Reels')}>Reels</Button>
-            </div>
+            {isAdmin && (
+              <div className="grid grid-cols-3 gap-2">
+                <Button size="sm" variant="outline" className="text-[10px] h-7 bg-transparent border-white/10 hover:bg-white/5 transition-all" onClick={() => handleMove('Products')}>Products</Button>
+                <Button size="sm" variant="outline" className="text-[10px] h-7 bg-transparent border-white/10 hover:bg-white/5 transition-all" onClick={() => handleMove('Websites')}>Websites</Button>
+                <Button size="sm" variant="outline" className="text-[10px] h-7 bg-transparent border-white/10 hover:bg-white/5 transition-all" onClick={() => handleMove('Reels')}>Reels</Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

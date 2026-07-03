@@ -5,6 +5,15 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 export default function Header({ onAddLinks }) {
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
+    const pwd = window.prompt('Enter Admin Password:');
+    if (pwd) {
+      localStorage.setItem('adminToken', pwd);
+      window.location.reload();
+    }
+  };
+
   return (
     <motion.header 
       initial={{ y: -20, opacity: 0 }}
@@ -12,7 +21,7 @@ export default function Header({ onAddLinks }) {
       className="sticky top-0 z-50 w-full border-b border-white/10 glass"
     >
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-8">
-        <Link to="/" className="flex items-center gap-2 cursor-pointer group">
+        <Link to="/" className="flex items-center gap-2 cursor-pointer group" onDoubleClick={handleAdminLogin} title="Double click to login as admin">
           <div className="bg-primary/20 p-2 rounded-xl group-hover:bg-primary/30 transition-colors">
             <Sparkles className="w-5 h-5 text-primary" />
           </div>
