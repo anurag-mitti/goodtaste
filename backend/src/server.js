@@ -16,7 +16,8 @@ await fastify.register(compress, { global: true });
 
 await fastify.register(cors, {
   origin: '*', // Allow all origins for this demo
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-admin-password']
 });
 
 const io = new Server(fastify.server, {
