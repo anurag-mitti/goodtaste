@@ -75,8 +75,31 @@ fastify.post('/api/ingest', { preHandler: [verifyAdmin] }, async (request, reply
 
 // API Endpoints
 fastify.get('/api/urls', async (request, reply) => {
-  const items = await UrlItem.find().sort({ createdAt: -1 });
+  const items = await UrlItem.find().select('-image').sort({ createdAt: -1 });
   return items;
+});
+
+fastify.get('/api/urls/:id/image', async (request, reply) => {
+  const { id } = request.params;
+  try {
+    const item = await UrlItem.findById(id).select('image');
+    if (!item || !item.image || item.image === 'N/A' || item.image === 'Failed to extract') {
+      return reply.code(404).send('Image not found');
+    }
+
+    const match = item.image.match(/^data:(.+);base64,(.+)$/);
+    if (match) {
+      const mimeType = match[1];
+      const buffer = Buffer.from(match[2], 'base64');
+      // Set aggressively long cache control since images rarely change for the same ID
+      reply.header('Cache-Control', 'public, max-age=31536000, immutable');
+      reply.type(mimeType).send(buffer);
+    } else {
+      reply.redirect(item.image);
+    }
+  } catch (error) {
+    reply.code(500).send('Error fetching image');
+  }
 });
 
 fastify.put('/api/urls/update', { preHandler: [verifyAdmin] }, async (request, reply) => {

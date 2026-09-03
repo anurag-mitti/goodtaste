@@ -67,42 +67,36 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
           </button>
         )}
         
-        {item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? (
-          <div className="relative aspect-[4/5] w-full overflow-hidden bg-black/50 group/img flex items-center justify-center">
-            <img 
-              src={item.image} 
-              alt={item.title || 'Preview'} 
-              loading="lazy"
-              className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-110 opacity-90 group-hover/card:opacity-100"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '';
-                e.target.className = 'hidden';
-                e.target.nextSibling.className = 'absolute inset-0 flex items-center justify-center text-muted-foreground bg-muted';
-              }}
-            />
-            {onUpdate && isAdmin && (
-              <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer text-white text-xs z-10">
-                Change Image
-                <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-              </label>
-            )}
-            <div className="hidden">
-              <ImageOff className="w-8 h-8 opacity-20" />
-            </div>
-          </div>
-        ) : (
-          <div className="aspect-[4/5] w-full bg-muted/20 flex flex-col items-center justify-center text-muted-foreground relative">
-            <ImageOff className="w-8 h-8 mb-2 opacity-50" />
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-black/50 group/img flex items-center justify-center">
+          <img 
+            src={item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/urls/${item._id}/image`} 
+            alt={item.title || 'Preview'} 
+            loading="lazy"
+            className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-110 opacity-90 group-hover/card:opacity-100"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '';
+              e.target.className = 'hidden';
+              e.target.nextSibling.className = 'absolute inset-0 flex flex-col items-center justify-center text-muted-foreground bg-muted/20 w-full h-full z-0';
+            }}
+          />
+          <div className="hidden">
+            <ImageOff className="w-8 h-8 opacity-50 mb-2" />
             <span className="text-sm">No image</span>
             {onUpdate && isAdmin && (
-              <label className="mt-4 cursor-pointer glass text-white px-3 py-1.5 rounded-md text-xs hover:bg-white/10 transition-colors">
+              <label className="mt-4 cursor-pointer glass text-white px-3 py-1.5 rounded-md text-xs hover:bg-white/10 transition-colors z-20">
                 Upload Image
                 <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
               </label>
             )}
           </div>
-        )}
+          {onUpdate && isAdmin && (
+            <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer text-white text-xs z-10">
+              Change Image
+              <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+            </label>
+          )}
+        </div>
 
         <CardContent className="p-4 flex-1 flex flex-col relative z-10 bg-background/50 backdrop-blur-sm border-t border-white/5">
           {isEditing ? (
@@ -199,7 +193,8 @@ export function ReelsGrid({ items, onUpdate, onDelete }) {
 
 function ManualCard({ item, onUpdate, onDelete }) {
   const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const [previewUrl, setPreviewUrl] = useState(item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : `${API_URL}/api/urls/${item._id}/image`);
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(item.title || '');
 
@@ -244,28 +239,36 @@ function ManualCard({ item, onUpdate, onDelete }) {
             <Trash2 className="w-3.5 h-3.5" />
           </button>
         )}
-        {previewUrl ? (
-          <div className="aspect-[4/5] w-full overflow-hidden bg-black/50 flex items-center justify-center relative group/img">
-            <img src={previewUrl} alt="Preview" loading="lazy" className="object-cover w-full h-full" />
-            {isAdmin && (
-              <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer text-white text-xs z-10">
-                Change Image
-                <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-              </label>
-            )}
-          </div>
-        ) : (
-          <div className="aspect-[4/5] w-full bg-muted/20 flex flex-col items-center justify-center text-muted-foreground p-4 text-center">
-            <ImageOff className="w-8 h-8 mb-2 opacity-50" />
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-black/50 group/img flex items-center justify-center">
+          <img 
+            src={previewUrl} 
+            alt="Preview" 
+            loading="lazy" 
+            className="object-cover w-full h-full" 
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '';
+              e.target.className = 'hidden';
+              e.target.nextSibling.className = 'absolute inset-0 flex flex-col items-center justify-center text-muted-foreground bg-muted/20 w-full h-full z-0 p-4 text-center';
+            }}
+          />
+          <div className="hidden">
+            <ImageOff className="w-8 h-8 opacity-50 mb-2" />
             <span className="text-sm">No image</span>
             {isAdmin && (
-              <label className="mt-4 cursor-pointer glass text-white px-3 py-1.5 rounded-md text-xs hover:bg-white/10 transition-colors">
+              <label className="mt-4 cursor-pointer glass text-white px-3 py-1.5 rounded-md text-xs hover:bg-white/10 transition-colors z-20">
                 Upload Image
                 <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
               </label>
             )}
           </div>
-        )}
+          {isAdmin && (
+            <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity cursor-pointer text-white text-xs z-10">
+              Change Image
+              <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+            </label>
+          )}
+        </div>
         <CardContent className="p-4 flex-1 flex flex-col relative z-10 bg-background/50 backdrop-blur-sm border-t border-white/5">
           {isEditing ? (
             <div className="flex gap-2 mb-2">
