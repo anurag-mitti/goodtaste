@@ -9,9 +9,9 @@ cloudinary.config({
 });
 
 async function migrate() {
-  const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/Clothes';
+  const MONGO_URI = 'mongodb+srv://anuragmitti:2owNt5LlVUwBLaWT@cluster0.rmqli.mongodb.net/Clothes?retryWrites=true&w=majority&appName=Cluster0';
   await mongoose.connect(MONGO_URI);
-  console.log('Connected to MongoDB');
+  console.log('Connected to Production MongoDB');
 
   const items = await UrlItem.find({ image: { $regex: /^data:/ } });
   console.log(`Found ${items.length} items with base64 images.`);

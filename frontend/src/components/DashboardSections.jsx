@@ -6,6 +6,18 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Globe, ShoppingCart, Video, ImageOff, Trash2, Edit2, CheckCircle2 } from 'lucide-react';
 
+const optimizeImageUrl = (url) => {
+  if (!url || url === 'N/A' || url === 'Failed to extract') return '';
+  let optimized = url;
+  if (optimized.startsWith('http://')) {
+    optimized = optimized.replace('http://', 'https://');
+  }
+  if (optimized.includes('res.cloudinary.com') && !optimized.includes('/upload/q_auto')) {
+    optimized = optimized.replace('/upload/', '/upload/q_auto,f_auto,w_500,c_limit/');
+  }
+  return optimized;
+};
+
 function ProgressiveGrid({ items, renderItem }) {
   const [count, setCount] = useState(12);
   
@@ -69,7 +81,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName, isPriori
         
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-black/50 group/img flex items-center justify-center">
           <img 
-            src={item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : ''} 
+            src={optimizeImageUrl(item.image)} 
             alt={item.title || 'Preview'} 
             loading={isPriority ? "eager" : "lazy"}
             className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-110 opacity-90 group-hover/card:opacity-100"
@@ -193,7 +205,7 @@ export function ReelsGrid({ items, onUpdate, onDelete }) {
 
 function ManualCard({ item, onUpdate, onDelete, isPriority }) {
   const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
-  const [previewUrl, setPreviewUrl] = useState(item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : null);
+  const [previewUrl, setPreviewUrl] = useState(optimizeImageUrl(item.image) || null);
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(item.title || '');
 
