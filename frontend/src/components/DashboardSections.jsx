@@ -23,7 +23,7 @@ function ProgressiveGrid({ items, renderItem }) {
   );
 }
 
-function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
+function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName, isPriority }) {
   const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(item.title || '');
@@ -71,7 +71,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName }) {
           <img 
             src={item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/urls/${item._id}/image`} 
             alt={item.title || 'Preview'} 
-            loading="lazy"
+            loading={isPriority ? "eager" : "lazy"}
             className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-110 opacity-90 group-hover/card:opacity-100"
             onError={(e) => {
               e.target.onerror = null;
@@ -166,7 +166,7 @@ export function ProductsGrid({ items, onUpdate, onDelete }) {
   return (
     <ProgressiveGrid 
       items={items} 
-      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={ShoppingCart} onUpdate={onUpdate} onDelete={onDelete} categoryName="Products" />} 
+      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={ShoppingCart} onUpdate={onUpdate} onDelete={onDelete} categoryName="Products" isPriority={i < 8} />} 
     />
   );
 }
@@ -176,7 +176,7 @@ export function WebsitesGrid({ items, onUpdate, onDelete }) {
   return (
     <ProgressiveGrid 
       items={items} 
-      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Globe} onUpdate={onUpdate} onDelete={onDelete} categoryName="Websites" />} 
+      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Globe} onUpdate={onUpdate} onDelete={onDelete} categoryName="Websites" isPriority={i < 8} />} 
     />
   );
 }
@@ -186,12 +186,12 @@ export function ReelsGrid({ items, onUpdate, onDelete }) {
   return (
     <ProgressiveGrid 
       items={items} 
-      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Video} onUpdate={onUpdate} onDelete={onDelete} categoryName="Reels" />} 
+      renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Video} onUpdate={onUpdate} onDelete={onDelete} categoryName="Reels" isPriority={i < 8} />} 
     />
   );
 }
 
-function ManualCard({ item, onUpdate, onDelete }) {
+function ManualCard({ item, onUpdate, onDelete, isPriority }) {
   const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
   const [previewUrl, setPreviewUrl] = useState(item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : `${API_URL}/api/urls/${item._id}/image`);
@@ -243,7 +243,8 @@ function ManualCard({ item, onUpdate, onDelete }) {
           <img 
             src={previewUrl} 
             alt="Preview" 
-            loading="lazy" 
+            loading={isPriority ? "eager" : "lazy"} 
+
             className="object-cover w-full h-full" 
             onError={(e) => {
               e.target.onerror = null;
@@ -315,7 +316,7 @@ export function ManualUploadGrid({ items, onUpdate, onDelete }) {
   return (
     <ProgressiveGrid 
       items={items} 
-      renderItem={(item, i) => <ManualCard key={item._id || i} item={item} onUpdate={onUpdate} onDelete={onDelete} />} 
+      renderItem={(item, i) => <ManualCard key={item._id || i} item={item} onUpdate={onUpdate} onDelete={onDelete} isPriority={i < 8} />} 
     />
   );
 }
@@ -331,7 +332,7 @@ export function TrashGrid({ items, onClearTrash }) {
       </div>
       <ProgressiveGrid 
         items={items} 
-        renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Trash2} categoryName="Trash" />} 
+        renderItem={(item, i) => <BaseCard key={item._id || i} item={item} icon={Trash2} categoryName="Trash" isPriority={i < 8} />} 
       />
     </div>
   );

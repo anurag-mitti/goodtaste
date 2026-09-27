@@ -1,0 +1,15 @@
+name: Keep Backend Alive
+
+on:
+  schedule:
+    - cron: '*/14 * * * *' # Runs every 14 minutes (Render spins down after 15m)
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend
+        run: |
+          curl -s https://goodtaste-backend.onrender.com/api/urls > /dev/null
+          echo "Pinged backend successfully to keep it awake."
