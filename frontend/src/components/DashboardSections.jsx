@@ -69,7 +69,7 @@ function BaseCard({ item, icon: Icon, onUpdate, onDelete, categoryName, isPriori
         
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-black/50 group/img flex items-center justify-center">
           <img 
-            src={item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/urls/${item._id}/image`} 
+            src={item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : ''} 
             alt={item.title || 'Preview'} 
             loading={isPriority ? "eager" : "lazy"}
             className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-110 opacity-90 group-hover/card:opacity-100"
@@ -193,8 +193,7 @@ export function ReelsGrid({ items, onUpdate, onDelete }) {
 
 function ManualCard({ item, onUpdate, onDelete, isPriority }) {
   const isAdmin = localStorage.getItem('adminToken') === 'mitti_dude';
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-  const [previewUrl, setPreviewUrl] = useState(item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : `${API_URL}/api/urls/${item._id}/image`);
+  const [previewUrl, setPreviewUrl] = useState(item.image && item.image !== 'N/A' && item.image !== 'Failed to extract' ? item.image : null);
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(item.title || '');
 

@@ -16,6 +16,7 @@
     "@fastify/cors": "^11.2.0",
     "axios": "^1.18.1",
     "cheerio": "^1.2.0",
+    "cloudinary": "^2.11.0",
     "fastify": "^5.9.0",
     "mongoose": "^9.7.3",
     "p-queue": "^9.3.0",
