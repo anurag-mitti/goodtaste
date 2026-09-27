@@ -25,7 +25,7 @@ export default function Dashboard() {
     'Trash': []
   });
 
-  const { data: swrData } = useSWR(`${API_URL}/api/urls`, url => fetch(url).then(r => r.json()), { 
+  const { data: swrData, isLoading } = useSWR(`${API_URL}/api/urls`, url => fetch(url).then(r => r.json()), { 
     revalidateOnFocus: false
   });
 
@@ -216,18 +216,28 @@ export default function Dashboard() {
             </div>
             
             <div className="mt-6 min-h-[500px]">
-              <AnimatePresence mode="wait">
-                <TabsContent value="Products" className="m-0" asChild>
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
-                    <ProductsGrid items={items['Products']} onUpdate={handleUpdateFields} onDelete={handleDelete} />
-                  </motion.div>
-                </TabsContent>
-                <TabsContent value="Websites" className="m-0" asChild>
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
-                    <WebsitesGrid items={items['Websites']} onUpdate={handleUpdateFields} onDelete={handleDelete} />
-                  </motion.div>
-                </TabsContent>
-                <TabsContent value="Reels" className="m-0" asChild>
+              {isLoading ? (
+                <div className="flex flex-col items-center justify-center h-64 text-muted-foreground w-full">
+                  <motion.div 
+                    animate={{ rotate: 360 }} 
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }} 
+                    className="w-10 h-10 border-4 border-muted-foreground/30 border-t-white rounded-full mb-4" 
+                  />
+                  <p className="animate-pulse">Waking up the engine...</p>
+                </div>
+              ) : (
+                <AnimatePresence mode="wait">
+                  <TabsContent value="Products" className="m-0" asChild>
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+                      <ProductsGrid items={items['Products']} onUpdate={handleUpdateFields} onDelete={handleDelete} />
+                    </motion.div>
+                  </TabsContent>
+                  <TabsContent value="Websites" className="m-0" asChild>
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+                      <WebsitesGrid items={items['Websites']} onUpdate={handleUpdateFields} onDelete={handleDelete} />
+                    </motion.div>
+                  </TabsContent>
+                  <TabsContent value="Reels" className="m-0" asChild>
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
                     <ReelsGrid items={items['Reels']} onUpdate={handleUpdateFields} onDelete={handleDelete} />
                   </motion.div>
@@ -243,6 +253,7 @@ export default function Dashboard() {
                   </motion.div>
                 </TabsContent>
               </AnimatePresence>
+              )}
             </div>
           </Tabs>
       </main>
